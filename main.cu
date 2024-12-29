@@ -95,8 +95,8 @@ void rotateImage(const unsigned char* input, unsigned char* output, int width, i
     cudaFree(d_input);
     cudaFree(d_output);
 
-	cudaEventDestroy(start);
-	cudaEventDestroy(stop);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
 }
 
 // Function to read PGM file
