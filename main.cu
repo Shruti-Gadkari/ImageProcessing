@@ -58,35 +58,35 @@ void rotateImage(const unsigned char* input, unsigned char* output, int width, i
     dim3 gridDim((width + BLOCK_SIZE - 1) / BLOCK_SIZE, (height + BLOCK_SIZE - 1) / BLOCK_SIZE);
 
     cudaEvent_t start, stop;
-	cudaEventCreate(&start);
-	cudaEventCreate(&stop);
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
 
-	// Record start event
+    // Record start event
     cudaEventRecord(start);
 
     // Launch kernel
     rotateImageKernel << <gridDim, blockDim >> > (d_input, d_output, width, height, cos_theta, sin_theta, centerX, centerY);
 
-	// Record stop event
-	cudaEventRecord(stop);
+    // Record stop event
+    cudaEventRecord(stop);
 
-	//wait for event to complete
-	cudaEventSynchronize(stop);
+    //wait for event to complete
+    cudaEventSynchronize(stop);
 
-	// Calculate elapsed time
-	float milliseconds = 0;
-	cudaEventElapsedTime(&milliseconds, start, stop);
+    // Calculate elapsed time
+    float milliseconds = 0;
+    cudaEventElapsedTime(&milliseconds, start, stop);
 
     //get the gpu clock rate
-	int clockRate;
-	cudaDeviceGetAttribute(&clockRate, cudaDevAttrClockRate, 0);
-	clockRate *= 1000; // Convert to Hz
+    int clockRate;
+    cudaDeviceGetAttribute(&clockRate, cudaDevAttrClockRate, 0);
+    clockRate *= 1000; // Convert to Hz
 
-	//calculate the number of cycles
-	double cycles = milliseconds * (clockRate/1000.0);
+    //calculate the number of cycles
+    double cycles = milliseconds * (clockRate/1000.0);
 
-	std::cout << "kernel execution time: " << milliseconds << " ms\n";
-	std::cout << "Total number of cycles: " << cycles << "\n";
+    std::cout << "kernel execution time: " << milliseconds << " ms\n";
+    std::cout << "Total number of cycles: " << cycles << "\n";
     
     // Copy result back to host
     cudaMemcpy(output, d_output, imageSize, cudaMemcpyDeviceToHost);
